@@ -5,13 +5,13 @@
 ## Setup
 
 ```sh
-$ make install
+$ npm i -g gendiff-1899
 ```
 
 ## Usage
 
 ```sh
-$ gendiff
+$ gendiff <firstConfigFile> <secondConfigFile>
 ```
 
 ![Usage](https://github.com/mgurbanzade/gendiff/blob/master/common/demo.gif)
