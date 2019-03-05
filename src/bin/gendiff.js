@@ -6,7 +6,9 @@ import genDiff from '..';
 program
   .version(v, '-V, --version')
   .description('A utility that calculates the difference between two config files')
-  .arguments('<firstConfig> <secondConfig>')
+  .arguments('<firstConfigPath> <secondConfigPath>')
   .option('-f, --format [type]', 'Output format')
-  .action((firstConfig, secondConfig) => console.log(genDiff(firstConfig, secondConfig)))
+  .action((firstConfigPath, secondConfigPath) => {
+    console.log(genDiff(firstConfigPath, secondConfigPath));
+  })
   .parse(process.argv);

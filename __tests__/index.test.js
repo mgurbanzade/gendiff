@@ -2,29 +2,32 @@ import fs from 'fs';
 import path from 'path';
 import gendiff from '../src';
 
-const findFixture = name => path.join(__dirname, '__fixtures__', name);
-const expected = fs.readFileSync(findFixture('expected'), 'utf-8');
-const sampleTitle = 'Calculate difference between two';
+describe('Calculate difference between two files', () => {
+  const findFixture = name => path.join(__dirname, '__fixtures__', name);
 
-test.each(['.json', '.yml', '.ini'])(
-  `${sampleTitle} %s files`, i => expect(gendiff(findFixture(`before${i}`), findFixture(`after${i}`))).toBe(expected),
-);
+  test.each(['.json', '.yml', '.ini'])(
+    'with extensions of %s', (i) => {
+      const file1 = findFixture(`before${i}`);
+      const file2 = findFixture(`after${i}`);
+      const expected = fs.readFileSync(findFixture('expected'), 'utf-8');
+      expect(gendiff(file1, file2)).toBe(expected);
+    },
+  );
 
-test(`${sampleTitle} files with different extensions`, () => {
-  const file1 = findFixture('before.yml');
-  const file2 = findFixture('after.json');
-  expect(gendiff(file1, file2)).toBe(expected);
+  test.each([
+    ['.json', '.yml'],
+    ['.yml', '.json'],
+    ['.json', '.ini'],
+    ['.ini', '.json'],
+    ['.yml', '.ini'],
+    ['.ini', '.yml'],
+  ])(
+    'with extensions of %s and %s',
+    (ex1, ex2) => {
+      const file1 = findFixture(`before${ex1}`);
+      const file2 = findFixture(`after${ex2}`);
+      const expected = fs.readFileSync(findFixture('expected'), 'utf-8');
+      expect(gendiff(file1, file2)).toBe(expected);
+    },
+  );
 });
-
-const crossExt = [
-  ['.json', '.yml'],
-  ['.yml', '.json'],
-  ['.json', '.ini'],
-  ['.ini', '.json'],
-  ['.yml', '.ini'],
-  ['.ini', '.yml'],
-];
-
-test.each(crossExt)(
-  `${sampleTitle} files with extensions of %s and %s`, (ex1, ex2) => expect(gendiff(findFixture(`before${ex1}`), findFixture(`after${ex2}`))).toBe(expected),
-);
