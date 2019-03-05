@@ -1,6 +1,6 @@
 {
   "name": "gendiff-1899",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Calculate the difference between two config files",
   "bin": {
     "gendiff": "dist/bin/gendiff.js"
@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "commander": "^2.19.0",
+    "js-yaml": "^3.12.2",
     "lodash": "^4.17.11"
   },
   "engines": {

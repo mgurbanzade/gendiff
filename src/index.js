@@ -1,11 +1,9 @@
-import fs from 'fs';
 import _ from 'lodash';
+import parser from './parsers';
 
 const stringify = (sign, key, val) => `  ${sign} ${key}: ${val}`;
-export default (firstConfig, secondConfig) => {
-  const
-    [file1, file2] = [firstConfig, secondConfig]
-      .map(file => JSON.parse(fs.readFileSync(file).toString()));
+export default (...args) => {
+  const [file1, file2] = args.map(file => parser(file));
   const keys = _.uniq(Object.keys(file1).concat(Object.keys(file2)));
   const diff = keys.reduce((acc, key) => {
     if (file1[key] === file2[key]) {

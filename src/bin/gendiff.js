@@ -8,5 +8,5 @@ program
   .description('A utility that calculates the difference between two config files')
   .arguments('<firstConfig> <secondConfig>')
   .option('-f, --format [type]', 'Output format')
-  .action((before, after) => console.log(genDiff(before, after)))
+  .action((firstConfig, secondConfig) => console.log(genDiff(firstConfig, secondConfig)))
   .parse(process.argv);
