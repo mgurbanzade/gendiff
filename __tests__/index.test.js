@@ -7,10 +7,10 @@ describe('Calculate difference between two files', () => {
 
   test.each(['.json', '.yml', '.ini'])(
     'with extensions of %s', (i) => {
-      const file1 = findFixture(`before${i}`);
-      const file2 = findFixture(`after${i}`);
+      const firstFilePath = findFixture(`before${i}`);
+      const secondFilePath = findFixture(`after${i}`);
       const expected = fs.readFileSync(findFixture('expected'), 'utf-8');
-      expect(gendiff(file1, file2)).toBe(expected);
+      expect(gendiff(firstFilePath, secondFilePath)).toBe(expected);
     },
   );
 
@@ -24,10 +24,10 @@ describe('Calculate difference between two files', () => {
   ])(
     'with extensions of %s and %s',
     (ex1, ex2) => {
-      const file1 = findFixture(`before${ex1}`);
-      const file2 = findFixture(`after${ex2}`);
+      const firstFilePath = findFixture(`before${ex1}`);
+      const secondFilePath = findFixture(`after${ex2}`);
       const expected = fs.readFileSync(findFixture('expected'), 'utf-8');
-      expect(gendiff(file1, file2)).toBe(expected);
+      expect(gendiff(firstFilePath, secondFilePath)).toBe(expected);
     },
   );
 });

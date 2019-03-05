@@ -1,7 +1,6 @@
 import yaml from 'js-yaml';
 import ini from 'ini';
 
-const validExtensions = new Set(['.json', '.yml', '.ini']);
 const parsers = {
   '.yml': yaml.safeLoad,
   '.json': JSON.parse,
@@ -9,6 +8,8 @@ const parsers = {
 };
 
 export default (extension) => {
-  if (!validExtensions.has(extension)) return null;
+  if (!parsers[extension]) {
+    throw new Error(`Files with extensions of ${extension} are not supported.`);
+  }
   return parsers[extension];
 };
