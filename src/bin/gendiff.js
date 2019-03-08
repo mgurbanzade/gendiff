@@ -9,6 +9,6 @@ program
   .arguments('<firstConfigPath> <secondConfigPath>')
   .option('-f, --format [type]', 'Output format')
   .action((firstConfigPath, secondConfigPath) => {
-    console.log(genDiff(firstConfigPath, secondConfigPath));
+    console.log(genDiff(firstConfigPath, secondConfigPath, program.format));
   })
   .parse(process.argv);

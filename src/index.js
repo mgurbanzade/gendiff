@@ -2,8 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import getParser from './parsers';
 import buildAST from './astBuilder';
-import render from './astRenderer';
-
+import getRenderer from './renderers/renderers';
 
 const defaultIndentSize = 0;
 const getExtension = filePath => path.extname(filePath);
@@ -14,8 +13,9 @@ const readDataByPath = (pathToData) => {
   return parseData(fs.readFileSync(pathToData, 'utf-8'));
 };
 
-export default (firstConfigPath, secondConfigPath) => {
+export default (firstConfigPath, secondConfigPath, format) => {
   const firstDataObj = readDataByPath(firstConfigPath);
   const secondDataObj = readDataByPath(secondConfigPath);
+  const render = getRenderer(format);
   return render(buildAST(firstDataObj, secondDataObj, defaultIndentSize));
 };

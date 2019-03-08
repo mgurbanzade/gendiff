@@ -1,6 +1,6 @@
 {
   "name": "gendiff-1899",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Calculate the difference between two config files",
   "bin": {
     "gendiff": "dist/bin/gendiff.js"
