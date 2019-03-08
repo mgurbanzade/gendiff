@@ -11,18 +11,18 @@ const funcDispatcher = {
 const render = (rawAst) => {
   const iter = (ast, propChain) => _.keys(ast).reduce((acc, nodeName) => {
     const node = ast[nodeName];
-    const stringify = funcDispatcher[node.status];
+    const stringify = funcDispatcher[node.type];
     const currentChain = propChain ? `${propChain}.${node.keyName}` : node.keyName;
 
-    if (nodeName.includes('Added')) {
-      const oldVal = presentValue(ast[`${node.keyName}Removed`].value);
-      const newVal = presentValue(node.value);
+    if (node.type === 'updated') {
+      const oldVal = presentValue(node.oldValue);
+      const newVal = presentValue(node.newValue);
       return [...acc, funcDispatcher.updated(currentChain, `From '${oldVal}' to '${newVal}'`)];
     }
 
     if (node.children) return [acc, iter(node.children, currentChain)];
-    if (node.status === 'unchanged' || nodeName.includes('Removed')) return acc;
-    return [...acc, stringify(currentChain, presentValue(node.value))];
+    if (node.type === 'unchanged' || nodeName.includes('Removed')) return acc;
+    return [...acc, stringify(currentChain, presentValue(node.newValue))];
   }, []);
 
   return `${_.flattenDeep(iter(rawAst, '')).join('\n')}\n`;

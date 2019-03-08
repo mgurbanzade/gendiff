@@ -1,44 +1,48 @@
 import _ from 'lodash';
 
 const indent = times => ' '.repeat(times);
+const isObj = input => input instanceof Object;
 
 const stringifyObj = (obj, indentSize) => {
+  if (!isObj(obj)) return obj;
   const newObj = _.keys(obj).reduce((acc, key) => [...acc, `${indent(indentSize + 8)}${key}: ${obj[key]}`], []);
   return _.flattenDeep(['{', newObj, `${indent(indentSize + 4)}}`]).join('\n');
 };
 
 const funcDispatcher = {
-  unchanged: (node, f) => `${indent(node.indentSize + 4)}${node.keyName}: ${f()}`,
-  internallyChanged: (node, f) => `${indent(node.indentSize + 4)}${node.keyName}: ${f()}`,
-  added: (node, f) => `${indent(node.indentSize + 2)}+ ${node.keyName}: ${f()}`,
-  removed: (node, f) => `${indent(node.indentSize + 2)}- ${node.keyName}: ${f()}`,
+  unchanged: (node, indentSize) => `${indent(indentSize + 4)}${node.keyName}: ${stringifyObj(node.newValue, indentSize)}`,
+  internallyChanged: (node, indentSize, f) => `${indent(indentSize + 4)}${node.keyName}: ${f()}`,
+  added: (node, indentSize) => `${indent(indentSize + 2)}+ ${node.keyName}: ${stringifyObj(node.newValue, indentSize)}`,
+  removed: (node, indentSize) => `${indent(indentSize + 2)}- ${node.keyName}: ${stringifyObj(node.oldValue, indentSize)}`,
 };
 
 const render = (rawAst) => {
-  const iter = (ast) => {
+  const defaultIndentSize = 0;
+
+  const iter = (ast, indentSize) => {
     const newAST = _.keys(ast).reduce((acc, nodeName) => {
       const node = ast[nodeName];
-      const stringify = funcDispatcher[node.status];
+      const stringify = funcDispatcher[node.type];
 
-      if (node.value instanceof Object) {
-        return [...acc, stringify(node, () => stringifyObj(node.value, node.indentSize))];
+      if (node.type === 'internallyChanged') {
+        const nodeChildren = iter(node.children, indentSize + 4);
+        return [...acc, stringify(node, indentSize, () => ['{', nodeChildren, `${indent(indentSize + 4)}}`].join('\n'))];
       }
 
-      if (node.children && !node.value) {
-        return [
-          ...acc,
-          stringify(node, () => ['{', iter(node.children), `${indent(node.indentSize + 4)}}`].join('\n')),
+      if (node.type === 'updated') {
+        return [...acc,
+          funcDispatcher.added(node, indentSize), funcDispatcher.removed(node, indentSize),
         ];
       }
 
-      return [...acc, stringify(node, () => node.value)];
+      return [...acc, stringify(node, indentSize, () => node.value)];
     }, []);
 
     return _.flattenDeep(newAST).join('\n');
   };
 
 
-  return `{\n${iter(rawAst)}\n}\n`;
+  return `{\n${iter(rawAst, defaultIndentSize)}\n}\n`;
 };
 
 export default render;
