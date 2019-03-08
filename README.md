@@ -11,7 +11,14 @@ $ npm i -g gendiff-1899
 ## Usage
 
 ```sh
-$ gendiff <firstConfigFile> <secondConfigFile>
+$ gendiff <firstConfigFile> <secondConfigFile> <format>
 ```
 
-![Usage](https://github.com/mgurbanzade/gendiff/blob/master/common/demo.gif)
+### Pretty
+![Pretty](https://github.com/mgurbanzade/gendiff/blob/master/common/demo-pretty.gif)
+
+### Plain
+![Plain](https://github.com/mgurbanzade/gendiff/blob/master/common/demo-plain.gif)
+
+
+Works with .json, .yml and .ini files.

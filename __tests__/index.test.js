@@ -11,8 +11,9 @@ describe('Calculate difference between two files', () => {
         'with extensions of %s', (i) => {
           const firstFilePath = findFixture(`${firstFileName}${i}`);
           const secondFilePath = findFixture(`${secondFileName}${i}`);
+          const actual = gendiff(firstFilePath, secondFilePath, format);
           const expected = fs.readFileSync(findFixture(`${expectedFileName}`), 'utf-8');
-          expect(gendiff(firstFilePath, secondFilePath, format)).toBe(expected);
+          expect(actual).toBe(expected);
         },
       );
 
@@ -28,15 +29,17 @@ describe('Calculate difference between two files', () => {
         (ex1, ex2) => {
           const firstFilePath = findFixture(`${firstFileName}${ex1}`);
           const secondFilePath = findFixture(`${secondFileName}${ex2}`);
+          const actual = gendiff(firstFilePath, secondFilePath, format);
           const expected = fs.readFileSync(findFixture(`${expectedFileName}`), 'utf-8');
-          expect(gendiff(firstFilePath, secondFilePath, format)).toBe(expected);
+          expect(actual).toBe(expected);
         },
       );
     });
   };
 
-  runTests('before', 'after', 'expected');
-  runTests('before-recursive', 'after-recursive', 'expected-recursive');
-  runTests('before', 'after', 'expected-plain', 'plain');
-  runTests('before-recursive', 'after-recursive', 'expected-recursive-plain', 'plain');
+  runTests('before', 'after', 'expected.txt');
+  runTests('before-recursive', 'after-recursive', 'expected-recursive.txt');
+  runTests('before', 'after', 'expected-plain.txt', 'plain');
+  runTests('before-recursive', 'after-recursive', 'expected-recursive-plain.txt', 'plain');
+  runTests('before-recursive', 'after-recursive', 'expected-recursive-json.txt', 'json');
 });
