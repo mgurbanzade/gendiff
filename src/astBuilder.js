@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const buildNode = (type, keyName, oldValue = null, newValue = null, children = null) => ({
+const buildNode = (type, keyName, oldValue = null, newValue = null, children = []) => ({
   type,
   keyName,
   oldValue,

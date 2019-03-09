@@ -1,31 +1,24 @@
+/* eslint-disable no-use-before-define */
 import _ from 'lodash';
 
 const presentValue = value => (value instanceof Object ? '[complex value]' : value);
 
 const funcDispatcher = {
-  added: (propChain, value) => `Property '${propChain}' was added with value: '${value}'`,
-  removed: propChain => `Property '${propChain}' was removed`,
-  updated: (propChain, value) => `Property '${propChain}' was updated. ${value}`,
+  added: propsObj => `Property '${propsObj.chain}' was added with value: '${presentValue(propsObj.node.newValue)}'`,
+  removed: propsObj => `Property '${propsObj.chain}' was removed`,
+  internallyChanged: propsObj => iter(propsObj.node.children, propsObj.chain),
+  updated: propsObj => `Property '${propsObj.chain}' was updated. From '${presentValue(propsObj.node.oldValue)}' to '${presentValue(propsObj.node.newValue)}'`,
 };
 
-const render = (rawAst) => {
-  const iter = (ast, propChain) => _.keys(ast).reduce((acc, nodeName) => {
+const iter = (ast, propChain = '') => _.keys(ast)
+  .filter(nodeName => ast[nodeName].type !== 'unchanged')
+  .map((nodeName) => {
     const node = ast[nodeName];
     const stringify = funcDispatcher[node.type];
     const currentChain = propChain ? `${propChain}.${node.keyName}` : node.keyName;
+    return stringify({ node, chain: currentChain });
+  });
 
-    if (node.type === 'updated') {
-      const oldVal = presentValue(node.oldValue);
-      const newVal = presentValue(node.newValue);
-      return [...acc, funcDispatcher.updated(currentChain, `From '${oldVal}' to '${newVal}'`)];
-    }
-
-    if (node.children) return [acc, iter(node.children, currentChain)];
-    if (node.type === 'unchanged' || nodeName.includes('Removed')) return acc;
-    return [...acc, stringify(currentChain, presentValue(node.newValue))];
-  }, []);
-
-  return `${_.flattenDeep(iter(rawAst, '')).join('\n')}\n`;
-};
+const render = ast => `${_.flattenDeep(iter(ast)).join('\n')}\n`;
 
 export default render;
